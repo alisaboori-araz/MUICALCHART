@@ -1,5 +1,5 @@
-
 {
-  "name": "Activity Calendar Chart",
-  "description": "A calendar-like chart displaying activity counts, with support for English/Persian languages and Gregorian/Jalaali calendar systems using moment-jalaali and MUI X Date Pickers. Styled with Tailwind CSS."
+  "name": "MUI Activity Calendar Heatmap",
+  "description": "A web application displaying activity counts in a calendar heatmap, with support for English/Gregorian and Persian/Jalaali date systems and languages.",
+  "requestFramePermissions": []
 }

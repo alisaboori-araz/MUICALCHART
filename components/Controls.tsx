@@ -1,56 +1,91 @@
 
 import React from 'react';
-import { Moment } from 'moment-jalaali';
-import { Locale } from '../types';
-import { ChevronLeftIcon, ChevronRightIcon } from './Icons';
+import type moment from 'moment-jalaali';
+import { CalendarSystem, UITranslations } from '../types';
+import { ChevronLeftIcon, ChevronRightIcon, SunIcon, MoonIcon } from './icons';
 
 interface ControlsProps {
-  locale: Locale;
-  onLocaleChange: (newLocale: Locale) => void;
-  currentMonthView: Moment;
-  onMonthChange: (direction: 'prev' | 'next') => void;
+  currentDisplayDate: moment.Moment;
+  // language: Language; // Removed
+  calendarSystem: CalendarSystem;
+  // onLanguageChange: (lang: Language) => void; // Removed
+  onCalendarSystemChange: (system: CalendarSystem) => void;
+  onNavigate: (unit: 'month' | 'year', amount: number) => void;
+  texts: UITranslations;
+  monthName: string;
+  year: string;
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
 }
 
-const Controls: React.FC<ControlsProps> = ({
-  locale,
-  onLocaleChange,
-  currentMonthView,
-  onMonthChange,
+const selectBaseClasses = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500";
+const buttonBaseClasses = "p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors";
+const navButtonClasses = `${buttonBaseClasses} flex items-center justify-center`;
+
+export const Controls: React.FC<ControlsProps> = ({
+  // language, // Removed
+  calendarSystem,
+  // onLanguageChange, // Removed
+  onCalendarSystemChange,
+  onNavigate,
+  texts,
+  monthName,
+  year,
+  isDarkMode,
+  toggleDarkMode
 }) => {
-  // currentMonthView is already localized by App.tsx's useEffect
-  const formattedMonthYear = currentMonthView.format(locale === 'fa' ? 'jMMMM jYYYY' : 'MMMM YYYY');
+  // const isRtl = language === 'fa'; // Removed, defaulting to LTR behavior
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 p-3 sm:p-4 bg-slate-700 rounded-lg shadow-md">
-      <div className="mb-3 sm:mb-0">
-        <button
-          onClick={() => onLocaleChange(locale === 'en' ? 'fa' : 'en')}
-          className="px-3 py-2 sm:px-4 sm:py-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-opacity-75 text-sm sm:text-base"
-        >
-          {locale === 'en' ? 'فارسی (شمسی)' : 'English (Gregorian)'}
-        </button>
+    <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-center">
+        {/* Language select removed */}
+        <div className="md:col-span-1"> {/* Was col-span-1, ensure layout is fine */}
+          <label htmlFor="calendar-system-select" className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">{texts.calendarSystem}:</label>
+          <select
+            id="calendar-system-select"
+            value={calendarSystem}
+            onChange={(e) => onCalendarSystemChange(e.target.value as CalendarSystem)}
+            className={selectBaseClasses}
+          >
+            <option value="gregorian">{texts.gregorian}</option>
+            <option value="jalaali">{texts.jalaali}</option>
+          </select>
+        </div>
+        <div className="md:col-span-1"> {/* Empty div for spacing or shift dark mode toggle here */}
+        </div>
+        <div className="flex items-center justify-start md:justify-end pt-2 md:pt-0 md:col-span-1"> {/* Adjusted to col-span-1 and pt-0 for alignment */}
+            <button onClick={toggleDarkMode} className={buttonBaseClasses} aria-label={isDarkMode ? texts.lightMode : texts.darkMode}>
+                {isDarkMode ? <SunIcon className="w-6 h-6 text-yellow-400" /> : <MoonIcon className="w-6 h-6 text-indigo-500" />}
+            </button>
+        </div>
       </div>
-      <div className="flex items-center space-x-1 sm:space-x-2 rtl:space-x-reverse">
-        <button
-          onClick={() => onMonthChange('prev')}
-          aria-label={locale === 'en' ? 'Previous month' : 'ماه قبل'}
-          className="p-2 bg-slate-600 hover:bg-slate-500 text-white rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-slate-400"
-        >
-          <ChevronLeftIcon className="w-5 h-5 sm:w-6 sm:h-6" />
-        </button>
-        <span className="text-base sm:text-lg font-semibold text-sky-300 w-36 sm:w-48 text-center tabular-nums">
-          {formattedMonthYear}
-        </span>
-        <button
-          onClick={() => onMonthChange('next')}
-          aria-label={locale === 'en' ? 'Next month' : 'ماه بعد'}
-          className="p-2 bg-slate-600 hover:bg-slate-500 text-white rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-slate-400"
-        >
-          <ChevronRightIcon className="w-5 h-5 sm:w-6 sm:h-6" />
-        </button>
+
+      <div className="flex items-center justify-between my-4">
+        <div className="flex items-center space-x-1"> {/* Removed rtl:space-x-reverse */}
+          <button onClick={() => onNavigate('year', -1)} className={navButtonClasses} title={texts.prevYear}>
+            <ChevronLeftIcon />
+            <ChevronLeftIcon />
+          </button>
+          <button onClick={() => onNavigate('month', -1)} className={navButtonClasses} title={texts.prevMonth}>
+            <ChevronLeftIcon />
+          </button>
+        </div>
+        
+        <div className="text-lg font-semibold text-center text-indigo-700 dark:text-indigo-300 whitespace-nowrap px-2">
+          {monthName} {year}
+        </div>
+
+        <div className="flex items-center space-x-1">  {/* Removed rtl:space-x-reverse */}
+          <button onClick={() => onNavigate('month', 1)} className={navButtonClasses} title={texts.nextMonth}>
+             <ChevronRightIcon />
+          </button>
+          <button onClick={() => onNavigate('year', 1)} className={navButtonClasses} title={texts.nextYear}>
+            <ChevronRightIcon />
+            <ChevronRightIcon />
+          </button>
+        </div>
       </div>
     </div>
   );
 };
-
-export default Controls;
