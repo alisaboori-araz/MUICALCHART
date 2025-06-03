@@ -33,7 +33,7 @@ const generateMockActivities = (
     tempMoment.locale('en').year(year).month(month);
   }
   
-  const daysInMonth = tempMoment.daysInMonth();
+  const daysInMonth = calendarSystem === 'jalaali'?momentJalaali.jDaysInMonth(tempMoment.jYear(), tempMoment.jMonth()):tempMoment.daysInMonth();
 
   for (let day = 1; day <= daysInMonth; day++) {
     let currentDayMoment: momentJalaali.Moment;
@@ -45,8 +45,8 @@ const generateMockActivities = (
     
     const gregorianDateKey = currentDayMoment.clone().locale('en').format('YYYY-MM-DD');
 
-    if (Math.random() > 0.35) { // ~65% chance of activity
-      const numberOfDescriptions = Math.floor(Math.random() * 3) + 1; // 1 to 3 descriptions
+    if (true) { // Math.random() > 0.35  // ~65% chance of activity
+      const numberOfDescriptions = Math.floor(Math.random() * 50) + 1; // 1 to 3 descriptions
       const dayDescriptions: string[] = [];
       const usedIndexes = new Set<number>();
       for (let i = 0; i < numberOfDescriptions; i++) {
