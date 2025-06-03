@@ -1,0 +1,5 @@
+
+{
+  "name": "Activity Calendar Chart",
+  "description": "A calendar-like chart displaying activity counts, with support for English/Persian languages and Gregorian/Jalaali calendar systems using moment-jalaali and MUI X Date Pickers. Styled with Tailwind CSS."
+}
